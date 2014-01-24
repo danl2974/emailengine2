@@ -1,16 +1,30 @@
 package com.lambdus.emailengine.persistence;
 
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
- 
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 public class SessionFactoryUtil {
+	
+	
 
-	 private static final SessionFactory sessionFactory;
+	 private static final SessionFactory sessionFactory = buildSessionFactory();
 
-	    static {
+	 private static SessionFactory buildSessionFactory() {
 	        try {
-	            sessionFactory = new Configuration().configure().buildSessionFactory();
+	            
+	        	//sessionFactory = new Configuration().configure().buildSessionFactory();
+	        SessionFactory sessionFactory = new Configuration()
+	        .addClass(TemplatePersist.class)
+	        .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+	        .setProperty("hibernate.connection.datasource", "java:jboss/datasources/MySqlDS")
+	        .setProperty("hibernate.current_session_context_class", "thread")
+	        .buildSessionFactory();
+	        	
+	        	return sessionFactory;
+	            
 	        } catch (Throwable ex) {
 	            
 	            System.err.println("Initial SessionFactory creation failed." + ex);
