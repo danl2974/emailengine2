@@ -71,7 +71,7 @@ public class MessageAssembler {
            {
                    log.info("go to Database");
                    TemplatePersist templateData = retrieveTemplateFromDB(templateId);
-                      this.template = templateData.getCreative();
+                     this.template = templateData.getCreative();
                      this.subjectLine = templateData.getSubjectline();
                      this.fromAddress = templateData.getFromaddress();
                      addRedisCache(templateId, templateData);
@@ -83,16 +83,16 @@ public class MessageAssembler {
         
         private TemplatePersist retrieveTemplateFromDB(int templateId)
         {
-                log.info("call from retrieveTemplateFromDB");
-                Session session = SessionFactoryUtil.getSessionFactory().getCurrentSession();
-                session.getTransaction().begin();
-        Criteria cb = session.createCriteria(TemplatePersist.class);
-        TemplatePersist result = (TemplatePersist) cb.add(Restrictions.eq("id",templateId)).uniqueResult();
-        session.getTransaction().commit();
+             log.info("call from retrieveTemplateFromDB");
+             Session session = SessionFactoryUtil.getSessionFactory().getCurrentSession();
+             session.getTransaction().begin();
+             Criteria cb = session.createCriteria(TemplatePersist.class);
+             TemplatePersist result = (TemplatePersist) cb.add(Restrictions.eq("id",templateId)).uniqueResult();
+             session.getTransaction().commit();
         
-        log.info(result);
+             log.info(result);
                 
-        return result;
+             return result;
         }
 
         public String getAssembledMessage()
@@ -132,5 +132,6 @@ public class MessageAssembler {
            redisHashMap.put("subjectline", templateData.getSubjectline());
            redisHashMap.put("fromaddress", templateData.getFromaddress());
            jedis.hmset(String.valueOf(templateId), redisHashMap);
+           jedis.expire(String.valueOf(templateId), 60);
         }
 }
