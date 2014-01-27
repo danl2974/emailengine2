@@ -24,7 +24,7 @@ public class MessageAssembler {
         public String assembledMessage;
         public String subjectLine;
         public String fromAddress;
-        
+        public String fromName;
         
         public MessageAssembler(int templateId, HashMap<String, String> tokenKVPairs)
         {
@@ -54,27 +54,29 @@ public class MessageAssembler {
         
         private void checkCache(int templateId)
         {
-                log.info("called checkCache");
+           log.info("called checkCache");
            //Redis in-memory cache key-value        
            Jedis jedis = new Jedis("localhost");
            
            if (jedis.exists(String.valueOf(templateId)))
            {
-                   log.info("exists in Redis");
-               String[] templateVarargs = {"creative","subjectline","fromaddress"};
-                 List<String> templateVals  = jedis.hmget(String.valueOf(templateId), templateVarargs);
-                      this.template = templateVals.get(0);
-                     this.subjectLine = templateVals.get(1);
-                     this.fromAddress = templateVals.get(2);
+               log.info("exists in Redis");
+               String[] templateVarargs = {"creative","subjectline","fromaddress", "fromname"};
+               List<String> templateVals  = jedis.hmget(String.valueOf(templateId), templateVarargs);
+               this.template = templateVals.get(0);
+               this.subjectLine = templateVals.get(1);
+               this.fromAddress = templateVals.get(2);
+               this.fromName = templateVals.get(3);
            }
            else
            {
-                   log.info("go to Database");
-                   TemplatePersist templateData = retrieveTemplateFromDB(templateId);
-                     this.template = templateData.getCreative();
-                     this.subjectLine = templateData.getSubjectline();
-                     this.fromAddress = templateData.getFromaddress();
-                     addRedisCache(templateId, templateData);
+               log.info("go to Database");
+               TemplatePersist templateData = retrieveTemplateFromDB(templateId);
+               this.template = templateData.getCreative();
+               this.subjectLine = templateData.getSubjectline();
+               this.fromAddress = templateData.getFromaddress();
+               this.fromName = templateData.getFromname();
+               addRedisCache(templateId, templateData);
                    
            }
              
@@ -110,6 +112,11 @@ public class MessageAssembler {
                 return this.fromAddress;
         }
         
+        public String getFromName()
+        {
+                return this.fromName;
+        }
+        
         /*
         private ArrayList<String> collectTokenItems(HashMap<String, String> params)
         {
@@ -131,6 +138,7 @@ public class MessageAssembler {
            redisHashMap.put("creative", templateData.getCreative());
            redisHashMap.put("subjectline", templateData.getSubjectline());
            redisHashMap.put("fromaddress", templateData.getFromaddress());
+           redisHashMap.put("fromname", templateData.getFromname());
            jedis.hmset(String.valueOf(templateId), redisHashMap);
            jedis.expire(String.valueOf(templateId), 60);
         }

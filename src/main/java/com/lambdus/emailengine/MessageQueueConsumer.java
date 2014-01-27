@@ -13,11 +13,11 @@ import javax.jms.MapMessage;
 
 
 
-        @MessageDriven(name = "TransactionalMailQueue", activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/transactionalemail"),
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
-public class MessageQueueConsumer implements MessageListener {
+     @MessageDriven(name = "TransactionalMailQueue", activationConfig = {
+     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+     @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/transactionalemail"),
+     @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
+      public class MessageQueueConsumer implements MessageListener {
 	
       private final static Logger LOGGER = Logger.getLogger(MessageQueueConsumer.class.toString());
       
@@ -33,7 +33,9 @@ public class MessageQueueConsumer implements MessageListener {
                   mapMessage.getString("emailAddress"),
                   mapMessage.getString("emailCreative"),
                   mapMessage.getString("subjectLine"),
-                  mapMessage.getString("fromAddress") );
+                  mapMessage.getString("fromAddress"),
+                  mapMessage.getString("fromName")
+                  );
                   
                   try
                   {

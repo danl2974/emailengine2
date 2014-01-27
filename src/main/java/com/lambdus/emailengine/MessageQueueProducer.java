@@ -62,6 +62,7 @@ public class MessageQueueProducer {
             this.emailMessage.emailAddress = this.request.getEmailAddress();
             this.emailMessage.subjectLine = ma.getSubjectLine();
             this.emailMessage.fromAddress = ma.getFromAddress();
+            this.emailMessage.fromName = ma.getFromName();
             
             startConnection();
             createMessage();
@@ -107,6 +108,7 @@ public class MessageQueueProducer {
               this.mapMessage.setString("emailCreative", emailMessage.emailCreative);
               this.mapMessage.setString("subjectLine", emailMessage.subjectLine);
               this.mapMessage.setString("fromAddress", emailMessage.fromAddress);
+              this.mapMessage.setString("fromName", emailMessage.fromName);
               
             }
             catch (JMSException e) {
@@ -120,10 +122,14 @@ public class MessageQueueProducer {
       try
       {
             this.messageProducer.send(this.mapMessage);
+            this.messageProducer.close();
+            this.session.close();
+            this.connection.close();
       }
-            catch (JMSException e) {
-                
-            }      
+      catch (JMSException jmse) {
+            log.info(jmse.getMessage());
+      }
+
     }
     
         public String getInfo(){

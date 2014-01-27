@@ -1,5 +1,6 @@
 package com.lambdus.emailengine;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Security;
 import java.util.Properties;
 import javax.mail.Message;
@@ -10,17 +11,21 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.jboss.logging.Logger;
+
 public class SMTPClient {
 	
+	private static final Logger log = Logger.getLogger(SMTPClient.class.getName());
 	
 	private Properties properties = System.getProperties();
 	private Session session;
 	private String toAddress;
 	private String fromAddress;
+	private String fromName;
 	private String subjectLine;
 	private String emailCreative;
 	
-	public SMTPClient(String emailAddress, String emailCreative, String subjectLine, String fromAddress) 
+	public SMTPClient(String emailAddress, String emailCreative, String subjectLine, String fromAddress, String fromName) 
 	{
 	
 	this.properties.setProperty("mail.smtp.host", "localhost");
@@ -28,6 +33,7 @@ public class SMTPClient {
 	this.toAddress = emailAddress;
 	this.emailCreative = emailCreative;
 	this.fromAddress = fromAddress;
+	this.fromName = fromName;
 	this.subjectLine = subjectLine;
 	
 	}
@@ -37,7 +43,7 @@ public class SMTPClient {
 	{
 	   try{
           MimeMessage message = new MimeMessage(this.session);
-          message.setFrom(new InternetAddress(this.fromAddress));
+          message.setFrom(new InternetAddress(this.fromAddress, this.fromName));
           message.addRecipient(Message.RecipientType.TO,
                                   new InternetAddress(this.toAddress));
           message.setSubject(this.subjectLine);
@@ -46,8 +52,10 @@ public class SMTPClient {
           Transport.send(message);
           
       }catch (MessagingException mex) {
-         mex.printStackTrace();
-      }
+    	  log.info(mex.getMessage());
+      }catch (UnsupportedEncodingException uee) {
+		 log.info(uee.getMessage());
+	}
 	}
 
 }

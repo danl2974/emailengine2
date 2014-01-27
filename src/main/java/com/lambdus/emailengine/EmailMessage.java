@@ -6,5 +6,6 @@ public class EmailMessage {
 	public String emailCreative;
 	public String subjectLine;
 	public String fromAddress;
+	public String fromName;
 
 }

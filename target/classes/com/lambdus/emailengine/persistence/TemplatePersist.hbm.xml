@@ -22,6 +22,10 @@
                                 <property name="fromaddress">
                                                 <column name="fromaddress" length="255" not-null="true" />
                                 </property>
+                                
+                                <property name="fromname">
+                                                <column name="fromname" length="255" not-null="true" />
+                                </property>
                                
                 </class>
 </hibernate-mapping>
